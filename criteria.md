@@ -25,7 +25,7 @@ contains the answer.
 **Why this target:**
 <!-- e.g. "One of my questions is about a topic only two documents mention, so
      I expect that one to be hard." -->
-
+The answer needs to be in the retrieved chunk to be of use. 
 ---
 
 ## 2. Every answer names a source
@@ -35,7 +35,7 @@ Every answer the system produces names at least one source document.
 **Why this target:**
 <!-- Why all five and not four? What about your setup makes that achievable —
      or what would have to go wrong for it not to be? -->
-
+Having a source increases the confidence of the answer, assuming the source is correct. It also gives a method to check the source and validate response. 
 ---
 
 ## 3. The relevance gate stops out-of-corpus questions
@@ -52,10 +52,13 @@ in at least 4 of 5 tries.
 **Why this target:**
 <!-- What did your distances look like when you set the cutoff in Milestone 4?
      Was there a clean gap, or did the two groups overlap? -->
+It is important to know when the answer isn't in the sources and that the llm isn't making an answer up. 
 
 ---
 
 ## 4. Something about your chunks
+
+Chunks do not have cut off sentences in 4 of 5 chunks.
 
 <!-- YOU WRITE THIS ONE.
 
@@ -72,12 +75,14 @@ in at least 4 of 5 tries.
 
 
 **Why this target:**
-
+Separated sentences also separates context. Answers are often in the same sentence, so getting rid of part of a sentence confuses the response and the distance search.
 
 
 ---
 
 ## 5. Your choice
+
+Source attribution should differentiate between student descriptions and other discriptions in at least 4 of 5 chunks.
 
 <!-- YOU WRITE THIS ONE TOO.
 
@@ -90,7 +95,7 @@ in at least 4 of 5 tries.
 
 
 **Why this target:**
-
+If a question clearly asks about the student feedback, then the source should be from a student. Likewise, if I ask specifically about the course description, then I may not want student input. Differentiating allows for more confidence in the answers for specific questions. 
 
 
 ---
