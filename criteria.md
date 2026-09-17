@@ -82,7 +82,7 @@ Separated sentences also separates context. Answers are often in the same senten
 
 ## 5. Your choice
 
-Source attribution should differentiate between student descriptions and other discriptions in at least 4 of 5 chunks.
+Source attribution should correctly differentiate between student descriptions and other discriptions in at least 4 of 5 chunks.
 
 <!-- YOU WRITE THIS ONE TOO.
 
