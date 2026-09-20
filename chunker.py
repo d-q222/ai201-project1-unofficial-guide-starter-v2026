@@ -96,9 +96,35 @@ def split_documents(documents: list[Document]) -> list[Chunk]:
       - Is the useful information in one sentence, or spread over a paragraph?
       - Would splitting on paragraph breaks keep more thoughts intact than
         splitting on a character count?
-    """
-    return fallback_split(documents)
 
+    Plan: chunk by line breaks. most documents are short posts, and sentences are usually dependent on each other.
+    Line breaks are good indicators of a new thought or shifted topic. 
+    """
+    chunks: list[Chunk] = []
+    for doc in documents:
+        # split document into parts by double line breaks
+        parts = [part.strip() for part in doc.text.split('\n\n') if part.strip()]
+        if not parts:
+            continue # skip empty docs
+        header, *paragraphs = parts # separate headers from paragraphs
+        if not paragraphs:
+            # if no paragraphs, the header is the chunk
+            paragraphs = [header]
+            header = ''
+        for index, paragraph in enumerate(paragraphs): # iterate through paragraphs
+            chunks.append(
+                Chunk(
+                    # create a chunk with paragraph and header if header exists
+                    text = header + "\n\n" + paragraph if header else paragraph,
+                    source = doc.source,
+                    index = index,
+                    produced_by = "chunker.py::split_documents"
+                )
+            )
+    if chunks:
+        return chunks
+    else:
+        return fallback_split(documents)
 
 def describe(chunks: list[Chunk]) -> str:
     """A one-line summary, printed after indexing."""
