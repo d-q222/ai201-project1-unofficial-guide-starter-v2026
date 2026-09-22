@@ -56,7 +56,7 @@ It is important to know when the answer isn't in the sources and that the llm is
 
 ---
 
-## 4. Something about your chunks
+## 4. Chunks are complete thoughts, having no cut off sentences
 
 Chunks do not have cut off sentences in 4 of 5 chunks.
 
@@ -80,7 +80,7 @@ Separated sentences also separates context. Answers are often in the same senten
 
 ---
 
-## 5. Your choice
+## 5. Source attributions differentiate between student and other descriptions
 
 Source attribution should correctly differentiate between student descriptions and other discriptions in at least 4 of 5 chunks.
 

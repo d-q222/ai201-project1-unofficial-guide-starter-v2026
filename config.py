@@ -27,13 +27,12 @@ CORPUS = os.getenv("AI201_CORPUS", "campus_life")
 # These are deliberately plain, generic numbers. Milestone 3 is where you
 # replace them with numbers that fit the documents you actually read.
 
-CHUNK_SIZE = 100        # characters per chunk
-CHUNK_OVERLAP = 30     # characters shared between neighbouring chunks
-# each sentence is about 100 characters long, so this is a good starting point for the "campus life" corpus.
+CHUNK_SIZE = 800        # characters per chunk
+CHUNK_OVERLAP = 50     # characters shared between neighbouring chunks
 
 # ─── Retrieval (Milestone 4) ─────────────────────────────────────────────────
 
-TOP_K = 5               # how many chunks to pull back per question
+TOP_K = 4               # how many chunks to pull back per question
 
 # The relevance gate. If the best chunk is further away than this, the system
 # refuses to answer instead of handing the model thin material.
@@ -43,7 +42,7 @@ TOP_K = 5               # how many chunks to pull back per question
 # 0.6 is a reasonable starting point, not a right answer. Milestone 4 has you
 # measure your own two groups of distances and put the cutoff in the gap.
 # Most corpora land somewhere between 0.45 and 0.75.
-THRESHOLD = 0.6
+THRESHOLD = 0.5
 
 
 # ─── Models ──────────────────────────────────────────────────────────────────

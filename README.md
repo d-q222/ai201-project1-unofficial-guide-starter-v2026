@@ -21,6 +21,7 @@
 
 ## What This Does
 
+This is a retrieval-augmented generation (RAG) system that splits documents from a corpus into chunks and scores them on relevance before feeding them to an LLM as sources to respond to a question. I picked the "campus life" corpus. My system answers questions about student life, including the workloads of various classes, wait times in dining halls, and grading and administrative policies. This system is tuned to respond to questions only when the answer to the question is clearly stated in the corpus. 
 <!-- Three or four sentences. Which corpus you picked, and the kinds of
      questions your system answers. Write it for someone who has never seen
      this repo.
@@ -30,7 +31,14 @@
 ## Chunking Strategy
 
 **Chunk size:**
+Each sentence is about 100 characters long, so this is a good starting point for the "campus life" corpus. They are also short posts, so each sentence contains answers to some question. 
+
+However, this ended up with an incoherent jumble of chunks, so I decided the fallback would be 800, as I chunked instead by paragraphs and included the header at the top of each. If the more advanced chunking were to fail, then I would just have a whole document as one chunk.
+
 **Overlap:**
+Overlap was 50, since I hoped to pick up some of the characters that may be straggling since any set number is a little too exact.
+
+After I changed the fallback to 800, the overlap doesn't matter anymore sice 800 covers basically all of the text for every doc.
 
 <!-- What about YOUR documents made you pick these numbers? Short posts and
      long sectioned guides don't want the same chunking, and "800 seemed
@@ -99,13 +107,22 @@ The good: cheapest housing tier by about $900 a year, and the singles are real s
      visible. Milestone 4. -->
 
 **Question:**
-
+"What do students say about the wait times of Pellew Dining Hall"
 **Answer:**
 
 ```
+(best distance 0.197, cutoff 0.45)
+
+Students state that the wait times at Pellew Dining Hall are 12 to 18 minutes at peak, which occurs early from 11:45 to 12:30. *(dining_pellew_dining_hall.txt, dining_pellew_dining_hall_followup.txt)*
+
+Sources retrieved: dining_halden_hall.txt, dining_halden_hall_followup.txt, dining_pellew_dining_hall.txt, dining_pellew_dining_hall_followup.txt
+
+1 model calls this session, 683 tokens (614 in, 69 out)
 ```
 
 **My relevance cutoff:**
+
+My relevance cutoff was 0.45. Of all my test questions, the best distances were 0.197, 0.219, 0.359, 0.328, and 0.380. For the given bogus questions, the best distances were 0.825, 0.886, 0.844, 0.896, and 0.934. My relevance cutoff sits in the gap between them
 
 <!-- The number you set in config.py, and how you got there.
 
@@ -118,7 +135,16 @@ The good: cheapest housing tier by about $900 a year, and the singles are real s
 
 | Question | In corpus? | Best distance |
 |---|---|---|
-|  |  |  |
+|"What is the deadline for grade appeals?"| Yes | 0.219 |
+|"What is the format for the ECON 101 final?"|Yes|0.359|
+|"What do students say about PHYS 130?"|Yes|0.328|
+|"What is the workload for ENGL 205?"|Yes|0.380|
+|"What do students say about the wait times of Pellew Dining Hall"|Yes|0.197|
+|"How do I write a for loop in Rust?"|No|0.896|
+|"What is the recommended dosage of ibuprofen for a headache?"|No|0.844|
+|"Who won the 1994 World Cup?"|No|0.886|
+|"How do I change the oil in a diesel engine?"|No|0.934|
+|"What is the capital of Mongolia?" |No|0.825|
 
 ## How I Used AI
 
@@ -132,13 +158,21 @@ The good: cheapest housing tier by about $900 a year, and the singles are real s
      Milestone 5. -->
 
 **1.**
-
+I asked Codex Luna to review my chunking-by-paragraph code, as the chunks were returning only the titles. It gave me two suggestions: instead of searching for line breaks, search for paragraphing, and make sure my start index is advanced sufficiently. I implemented both of these suggestions myself and caught some more bug fixes in the process. 
 **2.**
+I asked Claude to see if my chunking-by-paragraph method made chunks that stood alone. It told me that my first paragraph happened to stand alone since I had decided to add the header with the first paragraph, but the others needed some inference. It suggested that I include headers in every single chunk, and I implemented that code by myself. 
 
 <!-- ── Stretch features ─────────────────────────────────────────────────────
      Doing one? Say so here BEFORE you start. A feature this README never
      claims earns nothing.
      ───────────────────────────────────────────────────────────────────────── -->
+
+## Stretch Features
+Metadata filtering: Added a source query that can filter responses by source.
+
+|Question|Before|After|
+|---|---|---|
+|"What is the workload for ENGL 205?"|(best distance 0.380, cutoff 0.6) The workload for ENGL 205 is 4 to 5 hours a week, mostly spent on writing and rewriting (source: `course_engl_205_workload.txt` and `course_engl_205.txt`). It is front-loaded, meaning the first month is heavier than the rest as you learn the format (`course_engl_205_workload.txt`). Sources retrieved: course_cs_210_workload.txt, course_engl_205.txt, course_engl_205_workload.txt, course_phys_130_workload.txt \n 1 model calls this session, 575 tokens (487 in, 88 out)|(best distance 0.468, cutoff 0.5). The workload for ENGL 205 is expected to be 4 to 5 hours a week, which is mostly spent on writing and rewriting (course_engl_205.txt). \n Sources retrieved: course_engl_205.txt \n 1 model calls this session, 313 tokens (272 in, 41 out)|
 
 ---
 
